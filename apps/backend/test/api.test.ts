@@ -80,7 +80,7 @@ describe('API tests', () => {
       const addResponse = await api.post('/add-product', newProduct);
       const { id } = await addResponse.data;
       const deleteResponse = await api.delete(`/products/${id}`);
-      expect(deleteResponse.status).toBe(200);
+      expect(deleteResponse.status).toBe(204);
     });
   });
 
