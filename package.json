@@ -1,0 +1,28 @@
+{
+  "name": "php-store",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm -r run dev",
+    "dev:backend": "pnpm --filter backend run dev",
+    "test:backend": "pnpm --filter backend run test",
+    "test:coverage:backend": "pnpm --filter backend run test:coverage",
+    "dev:frontend": "pnpm --filter frontend run dev",
+    "docker:start": "docker compose -f infra/docker-compose.yml up -d",
+    "docker:stop": "docker compose -f infra/docker-compose.yml stop",
+    "docker:clean": "docker compose -f infra/docker-compose.yml rm -fsv"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.0",
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "tsx": "^4.20.6",
+    "vitest": "^4.0.8"
+  },
+  "dependencies": {
+    "axios": "^1.13.2"
+  }
+}

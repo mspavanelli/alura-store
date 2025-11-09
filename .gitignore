@@ -1,0 +1,44 @@
+# Node modules
+node_modules/
+apps/*/node_modules/
+
+# Build outputs
+dist/
+apps/*/dist/
+apps/*/.output/
+
+# Logs
+*.log
+apps/*/*.log
+
+# Environment files
+.env
+apps/*/.env
+
+# Docker
+infra/postgres-data/
+infra/*.local.yml
+
+# Vite / Frontend artifacts
+apps/frontend/.vite/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# IDE config
+.vscode/
+.idea/
+*.sw?
+
+# Coverage reports
+coverage/
+apps/*/coverage/
+
+# pnpm
+pnpm-lock.yaml
+.pnpm-debug.log
+
+# tests
+playwright-report/
+test-results/
