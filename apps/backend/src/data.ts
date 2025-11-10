@@ -105,3 +105,62 @@ export class ProductsDAODatabase implements ProductsDAO {
     return id;
   }
 }
+
+export class ProductsDAOInMemory implements ProductsDAO {
+  private products: any[];
+  private categories: any[];
+
+  constructor() {
+    this.products = [];
+    this.categories = [];
+  }
+
+  async getAllProducts() {
+    return this.products;
+  }
+
+  async getProductById(id: string) {
+    return this.products.find((product) => product.id === id);
+  }
+
+  async addProduct(
+    name: string,
+    description: string,
+    price: number,
+    used: boolean
+  ): Promise<string> {
+    const id = crypto.randomUUID();
+    this.products.push({ id, name, description, price, used });
+    return id;
+  }
+
+  async updateProduct(
+    id: string,
+    name: string,
+    description: string,
+    price: number,
+    used: boolean
+  ) {
+    const index = this.products.findIndex((product) => product.id === id);
+    if (index === -1) return 0;
+    this.products[index] = { id, name, description, price, used };
+    return 1;
+  }
+
+  async deleteProduct(id: string) {
+    const index = this.products.findIndex((product) => product.id === id);
+    if (index === -1) return 0;
+    this.products.splice(index, 1);
+    return 1;
+  }
+
+  async getAllCategories() {
+    return this.categories;
+  }
+
+  async addCategory(name: string) {
+    const id = crypto.randomUUID();
+    this.categories.push({ id, name });
+    return id;
+  }
+}

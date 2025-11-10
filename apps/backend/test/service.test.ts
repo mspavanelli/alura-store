@@ -2,14 +2,14 @@ import axios from 'axios';
 import { describe, expect, it } from 'vitest';
 import { CategoryService } from '@/category-service';
 import { ProductService } from '@/product-service';
-import { ProductsDAODatabase } from '@/data';
+import { ProductsDAODatabase, ProductsDAOInMemory } from '@/data';
 
 axios.defaults.validateStatus = function () {
   return true;
 };
 
 describe('API tests', () => {
-  const productDAO = new ProductsDAODatabase();
+  const productDAO = new ProductsDAOInMemory();
 
   describe('Products', () => {
     const productService = new ProductService(productDAO);

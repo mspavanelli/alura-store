@@ -3,7 +3,7 @@ import cors from 'cors';
 
 import { ProductService } from '@/product-service';
 import { CategoryService } from '@/category-service';
-import { ProductsDAODatabase } from '@/data';
+import { ProductsDAOInMemory } from '@/data';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,9 +11,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+const productDAO = new ProductsDAOInMemory();
+
 app.get('/products', async (request, response) => {
   try {
-    const productDAO = new ProductsDAODatabase();
     const productService = new ProductService(productDAO);
     const data = await productService.listProducts();
     response.json(data);
@@ -26,7 +27,6 @@ app.get('/products', async (request, response) => {
 app.get('/products/:id', async (request, response) => {
   const { id } = request.params;
   try {
-    const productDAO = new ProductsDAODatabase();
     const service = new ProductService(productDAO);
     const data = await service.getProduct(id);
     response.json(data);
@@ -38,7 +38,7 @@ app.get('/products/:id', async (request, response) => {
 
 app.post('/add-product', async (request, response) => {
   const { name, description, price, used } = request.body;
-  const productDAO = new ProductsDAODatabase();
+
   const service = new ProductService(productDAO);
   try {
     const id = await service.createProduct(name, description, price, used || false);
@@ -51,7 +51,7 @@ app.post('/add-product', async (request, response) => {
 app.post('/update-product/:id', async (request, response) => {
   const { id } = request.params;
   const { name, description, price, used } = request.body;
-  const productDAO = new ProductsDAODatabase();
+
   const service = new ProductService(productDAO);
   try {
     await service.modifyProduct(id, name, description, price, used || false);
@@ -63,7 +63,7 @@ app.post('/update-product/:id', async (request, response) => {
 
 app.delete('/products/:id', async (request, response) => {
   const { id } = request.params;
-  const productDAO = new ProductsDAODatabase();
+
   const service = new ProductService(productDAO);
   try {
     await service.removeProduct(id);
@@ -75,7 +75,7 @@ app.delete('/products/:id', async (request, response) => {
 });
 
 app.get('/categories', async (request, response) => {
-  const categoryDAO = new ProductsDAODatabase();
+  const categoryDAO = new ProductsDAOInMemory();
   const service = new CategoryService(categoryDAO);
   try {
     const data = await service.listCategories();
@@ -87,7 +87,7 @@ app.get('/categories', async (request, response) => {
 });
 
 app.post('/add-category', async (request, response) => {
-  const categoryDAO = new ProductsDAODatabase();
+  const categoryDAO = new ProductsDAOInMemory();
   const service = new CategoryService(categoryDAO);
   const { name } = request.body;
   try {
