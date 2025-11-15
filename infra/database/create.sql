@@ -7,6 +7,7 @@ create table alura_store.products (
     name varchar(255) not null,
     description text not null,
     price decimal(10,2) not null,
+    used boolean default false,
     category_id uuid
 );
 
