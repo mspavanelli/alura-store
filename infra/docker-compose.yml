@@ -1,6 +1,9 @@
+name: alura_store
+
 services:
   postgres:
-    image: postgres:14.3
+    image: postgres:18
+    container_name: alura_store_db
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: 123456
