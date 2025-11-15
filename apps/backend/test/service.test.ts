@@ -1,125 +1,103 @@
-import axios from 'axios';
-import { describe, expect, it } from 'vitest';
-import { CategoryService } from '@/category-service';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { ProductService } from '@/product-service';
+import { CategoryService } from '@/category-service';
 import { ProductsDAODatabase, ProductsDAOInMemory } from '@/data';
 
-axios.defaults.validateStatus = function () {
-  return true;
-};
-
-describe('API tests', () => {
-  const productDAO = new ProductsDAOInMemory();
-
+describe('Service tests', () => {
   describe('Products', () => {
-    const productService = new ProductService(productDAO);
+    let productService: ProductService;
+
+    beforeEach(() => {
+      const productRepository = new ProductsDAOInMemory();
+      productService = new ProductService(productRepository);
+    });
     it('should list products', async () => {
       const products = await productService.listProducts();
       expect(Array.isArray(products)).toBeTruthy();
     });
-
     it('should add a new product', async () => {
-      const newProduct = {
-        name: 'Test Product',
-        description: 'Test Description',
-        price: 99.99,
-        used: false,
-      };
-      const response = await productService.createProduct(
-        'Test Product',
-        'Test Description',
-        99.99,
-        false
-      );
-      const id = response;
-      // expect(response).toHaveProperty('id');
-      const getProductResponse = await productService.getProduct(id);
-      const addedProduct = getProductResponse;
+      const name = 'Test Product';
+      const description = 'Test Description';
+      const price = 49.99;
+      const used = false;
+
+      const id = await productService.createProduct(name, description, price, used);
+      expect(id).toBeDefined();
+
+      const addedProduct = await productService.getProduct(id);
       expect(addedProduct).toBeDefined();
-      expect(addedProduct.name).toBe(newProduct.name);
-      expect(addedProduct.price).toBe(newProduct.price);
-      expect(addedProduct.description).toBe(newProduct.description);
-      expect(addedProduct.used).toEqual(newProduct.used);
+      expect(addedProduct.name).toBe(name);
+      expect(addedProduct.price).toBe(price);
+      expect(addedProduct.description).toBe(description);
+      expect(addedProduct.used).toEqual(used);
     });
 
     it('should update a product', async () => {
-      const newProduct = {
-        name: 'Product to Update',
-        description: 'Description to Update',
-        price: 59.99,
-        used: false,
-      };
+      const name = 'Product to Update';
+      const description = 'Description to Update';
+      const price = 59.99;
+      const used = false;
 
-      const addResponse = await productService.createProduct(
-        newProduct.name,
-        newProduct.description,
-        newProduct.price,
-        newProduct.used
-      );
-      const id = await addResponse;
-      const updatedProduct = {
-        name: 'Updated Product Name',
-        description: 'Updated Description',
-        price: 79.99,
-        used: true,
-      };
-      const updateResponse = await productService.modifyProduct(
+      const id = await productService.createProduct(name, description, price, used);
+
+      const updatedName = 'Updated Product Name';
+      const updatedDescription = 'Updated Description';
+      const updatedPrice = 79.99;
+      const updatedUsed = true;
+
+      await productService.modifyProduct(
         id,
-        updatedProduct.name,
-        updatedProduct.description,
-        updatedProduct.price,
-        updatedProduct.used
+        updatedName,
+        updatedDescription,
+        updatedPrice,
+        updatedUsed
       );
-      const getProductResponse = await productService.getProduct(id);
-      const fetchedProduct = getProductResponse;
-      expect(fetchedProduct.name).toBe(updatedProduct.name);
-      expect(fetchedProduct.description).toBe(updatedProduct.description);
-      expect(fetchedProduct.price).toBe(updatedProduct.price);
-      expect(fetchedProduct.used).toEqual(updatedProduct.used);
+
+      const fetchedProduct = await productService.getProduct(id);
+      expect(fetchedProduct.name).toBe(updatedName);
+      expect(fetchedProduct.description).toBe(updatedDescription);
+      expect(fetchedProduct.price).toBe(updatedPrice);
+      expect(fetchedProduct.used).toEqual(updatedUsed);
     });
 
-    it('should return 400 if product is invalid', async () => {
-      const invalidProduct = { name: '', description: '', price: 0 };
+    it('should throw error if product is invalid', async () => {
+      const invalidName = '';
+      const invalidDescription = '';
+      const invalidPrice = 0;
+
       await expect(
-        productService.createProduct(
-          invalidProduct.name,
-          invalidProduct.description,
-          invalidProduct.price,
-          false
-        )
-      ).rejects.toThrow();
+        productService.createProduct(invalidName, invalidDescription, invalidPrice, false)
+      ).rejects.toThrow('Invalid product data');
     });
 
     it('should remove a product', async () => {
-      const newProduct = {
-        name: 'Product to Remove',
-        description: 'Description to Remove',
-        price: 49.99,
-      };
-      const addResponse = await productService.createProduct(
-        newProduct.name,
-        newProduct.description,
-        newProduct.price,
-        false
-      );
-      const id = addResponse;
-      const deleteResponse = await productService.removeProduct(id);
-      expect(deleteResponse).toBe(1);
+      const name = 'Product to Remove';
+      const description = 'Description to Remove';
+      const price = 29.99;
+      const used = false;
+      const id = await productService.createProduct(name, description, price, used);
+      await productService.removeProduct(id);
+      await expect(productService.getProduct(id)).rejects.toThrow('Product not found');
     });
   });
 
   describe('Categories', () => {
-    const categoryService = new CategoryService(productDAO);
+    let categoryService: CategoryService;
+
+    beforeEach(() => {
+      const productRepository = new ProductsDAOInMemory();
+      categoryService = new CategoryService(productRepository);
+    });
+
     it('should list categories', async () => {
-      const response = await categoryService.listCategories();
-      expect(Array.isArray(response)).toBeTruthy();
+      const categories = await categoryService.listCategories();
+      expect(Array.isArray(categories)).toBeTruthy();
     });
 
     it('should add a new category', async () => {
-      const newCategory = { name: 'Test Category' };
-      const response = await categoryService.createCategory(newCategory.name);
-      expect(response).toBeDefined();
-      // expect(response).toHaveProperty('id');
+      const name = 'Test Category';
+      const id = await categoryService.createCategory(name);
+      expect(id).toBeDefined();
     });
   });
 });
