@@ -107,30 +107,21 @@ export class ProductsDAODatabase implements ProductsDAO {
 }
 
 export class ProductsDAOInMemory implements ProductsDAO {
-  private products: any[];
-  private categories: any[];
-
-  constructor() {
-    this.products = [];
-    this.categories = [];
-  }
+  private products: any[] = [];
+  private categories: any[] = [];
 
   async getAllProducts() {
     return this.products;
   }
 
   async getProductById(id: string) {
-    return this.products.find((product) => product.id === id);
+    return this.products.find((product) => product.id === id) || null;
   }
 
-  async addProduct(
-    name: string,
-    description: string,
-    price: number,
-    used: boolean
-  ): Promise<string> {
+  async addProduct(name: string, description: string, price: number, used: boolean) {
     const id = crypto.randomUUID();
-    this.products.push({ id, name, description, price, used });
+    const newProduct = { id, name, description, price, used };
+    this.products.push(newProduct);
     return id;
   }
 
@@ -160,7 +151,8 @@ export class ProductsDAOInMemory implements ProductsDAO {
 
   async addCategory(name: string) {
     const id = crypto.randomUUID();
-    this.categories.push({ id, name });
+    const newCategory = { id, name };
+    this.categories.push(newCategory);
     return id;
   }
 }
