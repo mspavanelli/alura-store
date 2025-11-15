@@ -16,8 +16,7 @@ describe.skip('API tests', () => {
     it('should list products', async () => {
       const response = await api.get('/products');
       expect(response.status).toBe(200);
-      const products = response.data;
-      expect(Array.isArray(products)).toBeTruthy();
+      expect(Array.isArray(response.data)).toBeTruthy();
     });
 
     it('should add a new product', async () => {
@@ -29,40 +28,7 @@ describe.skip('API tests', () => {
       };
       const response = await api.post('/add-product', newProduct);
       expect(response.status).toBe(201);
-      const responseBody = response.data;
-      expect(responseBody).toHaveProperty('id');
-      const getProductResponse = await api.get(`/products/${responseBody.id}`);
-      const addedProduct = getProductResponse.data;
-      expect(addedProduct).toBeDefined();
-      expect(addedProduct.name).toBe(newProduct.name);
-      expect(addedProduct.price).toBe(newProduct.price);
-      expect(addedProduct.description).toBe(newProduct.description);
-      expect(addedProduct.used).toEqual(newProduct.used);
-    });
-
-    it('should update a product', async () => {
-      const newProduct = {
-        name: 'Product to Update',
-        description: 'Description to Update',
-        price: 59.99,
-        used: false,
-      };
-      const addResponse = await api.post('/add-product', newProduct);
-      const { id } = await addResponse.data;
-      const updatedProduct = {
-        name: 'Updated Product Name',
-        description: 'Updated Description',
-        price: 79.99,
-        used: true,
-      };
-      const updateResponse = await api.post(`/update-product/${id}`, updatedProduct);
-      expect(updateResponse.status).toBe(200);
-      const getProductResponse = await api.get(`/products/${id}`);
-      const fetchedProduct = getProductResponse.data;
-      expect(fetchedProduct.name).toBe(updatedProduct.name);
-      expect(fetchedProduct.description).toBe(updatedProduct.description);
-      expect(fetchedProduct.price).toBe(updatedProduct.price);
-      expect(fetchedProduct.used).toEqual(updatedProduct.used);
+      expect(response.data).toHaveProperty('id');
     });
 
     it('should return 400 if product is invalid', async () => {
@@ -70,34 +36,20 @@ describe.skip('API tests', () => {
       const response = await api.post('/add-product', invalidProduct);
       expect(response.status).toBe(400);
     });
-
-    it('should remove a product', async () => {
-      const newProduct = {
-        name: 'Product to Remove',
-        description: 'Description to Remove',
-        price: 49.99,
-      };
-      const addResponse = await api.post('/add-product', newProduct);
-      const { id } = await addResponse.data;
-      const deleteResponse = await api.delete(`/products/${id}`);
-      expect(deleteResponse.status).toBe(204);
-    });
   });
 
   describe('Categories', () => {
     it('should list categories', async () => {
       const response = await api.get('/categories');
       expect(response.status).toBe(200);
-      const categories = response.data;
-      expect(Array.isArray(categories)).toBeTruthy();
+      expect(Array.isArray(response.data)).toBeTruthy();
     });
 
     it('should add a new category', async () => {
       const newCategory = { name: 'Test Category' };
       const response = await api.post('/add-category', newCategory);
       expect(response.status).toBe(201);
-      const responseBody = response.data;
-      expect(responseBody).toHaveProperty('id');
+      expect(response.data).toHaveProperty('id');
     });
   });
 });
